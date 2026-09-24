@@ -1,0 +1,342 @@
+// شكل قاعدة بيانات روندي — المرحلة ١: الأساس
+// قواعد ثابتة:
+//  - مفيش مسح نهائي لأي سجل (في trigger في قاعدة البيانات بيمنع ده). بدل المسح: إيقاف (isActive = false).
+//  - كل تعديل بيتسجل في audit_log بالقيمة القديمة والجديدة.
+//  - كل جدول فيه version عشان لو اتنين عدّلوا نفس السجل في نفس الوقت، التاني ياخد تنبيه بدل ما يمسح شغل الأول.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+  runtime      = "nodejs"
+  importFileExtension = ""
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────── المستخدمين والصلاحيات ─────────────
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(40)
+  name        String   @db.VarChar(60)
+  description String?  @db.VarChar(300)
+  isSystem    Boolean  @default(false) @map("is_system")
+  mfaRequired Boolean  @default(false) @map("mfa_required")
+  permissions String[] @default([])
+  isActive    Boolean  @default(true) @map("is_active")
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  users User[]
+
+  @@map("roles")
+}
+
+model User {
+  id                 String    @id @default(uuid()) @db.Uuid
+  username           String    @unique @db.VarChar(32)
+  fullName           String    @map("full_name") @db.VarChar(100)
+  /// رقم الموبايل متشفر (AES-256-GCM)
+  phoneEnc           String?   @map("phone_enc")
+  roleId             String    @map("role_id") @db.Uuid
+  role               Role      @relation(fields: [roleId], references: [id])
+  passwordHash       String    @map("password_hash")
+  mustChangePassword Boolean   @default(true) @map("must_change_password")
+  passwordChangedAt  DateTime  @default(now()) @map("password_changed_at") @db.Timestamptz(6)
+  failedLoginCount   Int       @default(0) @map("failed_login_count")
+  lockedUntil        DateTime? @map("locked_until") @db.Timestamptz(6)
+  lastLoginAt        DateTime? @map("last_login_at") @db.Timestamptz(6)
+  mfaEnabled         Boolean   @default(false) @map("mfa_enabled")
+  /// سر الرمز الإضافي متشفر (AES-256-GCM)
+  mfaSecretEnc       String?   @map("mfa_secret_enc")
+  /// آخر رمز اتقبل، عشان نفس الرمز مايتستخدمش مرتين
+  mfaLastStep        BigInt?   @map("mfa_last_step")
+  isActive           Boolean   @default(true) @map("is_active")
+  version            Int       @default(1)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  sessions Session[]
+
+  @@index([roleId])
+  @@map("users")
+}
+
+model Session {
+  id           String    @id @default(uuid()) @db.Uuid
+  /// بنخزن بصمة الرمز بس (sha256)، مش الرمز نفسه
+  tokenHash    String    @unique @map("token_hash") @db.Char(64)
+  csrfToken    String    @map("csrf_token") @db.VarChar(64)
+  userId       String    @map("user_id") @db.Uuid
+  user         User      @relation(fields: [userId], references: [id])
+  mfaPassed    Boolean   @default(false) @map("mfa_passed")
+  ip           String?   @db.VarChar(64)
+  userAgent    String?   @map("user_agent") @db.VarChar(300)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastSeenAt   DateTime  @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+  expiresAt    DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt    DateTime? @map("revoked_at") @db.Timestamptz(6)
+  revokeReason String?   @map("revoke_reason") @db.VarChar(40)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+/// سجل العمليات: ميتعدلش وميتمسحش، وكل سطر مربوط بالسطر اللي قبله ببصمة (hash chain)
+/// فأي تلاعب في القاعدة نفسها بيتكشف.
+model AuditLog {
+  id        BigInt   @id @default(autoincrement())
+  at        DateTime @default(now()) @db.Timestamptz(6)
+  actorId   String?  @map("actor_id") @db.Uuid
+  actorName String?  @map("actor_name") @db.VarChar(100)
+  action    String   @db.VarChar(40)
+  entity    String   @db.VarChar(40)
+  entityId  String?  @map("entity_id") @db.VarChar(64)
+  before    Json?
+  after     Json?
+  ip        String?  @db.VarChar(64)
+  userAgent String?  @map("user_agent") @db.VarChar(300)
+  prevHash  String   @default("") @map("prev_hash") @db.Char(64)
+  hash      String   @default("") @db.Char(64)
+
+  @@index([entity, entityId])
+  @@index([actorId])
+  @@index([at])
+  @@map("audit_log")
+}
+
+// ───────────── القوائم الثابتة ─────────────
+
+enum ProductBody {
+  CERAMIC
+  PORCELAIN
+}
+
+enum ProductUse {
+  WALL
+  FLOOR
+}
+
+enum SurfaceFinish {
+  GLOSSY
+  MATT
+  SATIN
+  POLISHED
+  STRUCTURED
+}
+
+enum MaterialCategory {
+  BODY
+  GLAZE
+  COLOR
+  INK
+  CHEMICAL
+  PACKAGING
+}
+
+enum MaterialUnit {
+  TON
+  KG
+  LITER
+  PIECE
+  ROLL
+}
+
+enum EquipmentType {
+  BALL_MILL
+  SPRAY_DRYER
+  PRESS
+  DRYER
+  GLAZING_LINE
+  DIGITAL_PRINTER
+  KILN
+  SORTING_MACHINE
+  PACKING_MACHINE
+  OTHER
+}
+
+enum ProductionStage {
+  PREPARATION
+  PRESSING
+  DRYING
+  GLAZING
+  FIRING
+  SORTING
+  PACKING
+  WAREHOUSE
+}
+
+// ───────────── البيانات الأساسية ─────────────
+
+model ProductModel {
+  id          String        @id @default(uuid()) @db.Uuid
+  code        String        @unique @db.VarChar(20)
+  name        String        @db.VarChar(80)
+  body        ProductBody
+  use         ProductUse
+  finish      SurfaceFinish
+  notes       String?       @db.VarChar(500)
+  isActive    Boolean       @default(true) @map("is_active")
+  version     Int           @default(1)
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById String?       @map("created_by") @db.Uuid
+  updatedById String?       @map("updated_by") @db.Uuid
+
+  variants ProductVariant[]
+
+  @@map("product_models")
+}
+
+model Size {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(20)
+  lengthMm    Int      @map("length_mm")
+  widthMm     Int      @map("width_mm")
+  thicknessMm Decimal  @map("thickness_mm") @db.Decimal(5, 2)
+  isActive    Boolean  @default(true) @map("is_active")
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById String?  @map("created_by") @db.Uuid
+  updatedById String?  @map("updated_by") @db.Uuid
+
+  variants ProductVariant[]
+
+  @@map("sizes")
+}
+
+/// الصنف = موديل + مقاس + طريقة التعبئة. ده اللي بيتنتج ويتخزن ويتباع.
+model ProductVariant {
+  id               String       @id @default(uuid()) @db.Uuid
+  code             String       @unique @db.VarChar(45)
+  modelId          String       @map("model_id") @db.Uuid
+  model            ProductModel @relation(fields: [modelId], references: [id])
+  sizeId           String       @map("size_id") @db.Uuid
+  size             Size         @relation(fields: [sizeId], references: [id])
+  piecesPerCarton  Int          @map("pieces_per_carton")
+  cartonsPerPallet Int          @map("cartons_per_pallet")
+  /// محسوبة من المقاس × عدد البلاطات
+  sqmPerCarton     Decimal      @map("sqm_per_carton") @db.Decimal(10, 4)
+  sqmPerPallet     Decimal      @map("sqm_per_pallet") @db.Decimal(12, 4)
+  cartonWeightKg   Decimal?     @map("carton_weight_kg") @db.Decimal(7, 2)
+  isActive         Boolean      @default(true) @map("is_active")
+  version          Int          @default(1)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById      String?      @map("created_by") @db.Uuid
+  updatedById      String?      @map("updated_by") @db.Uuid
+
+  @@unique([modelId, sizeId])
+  @@index([sizeId])
+  @@map("product_variants")
+}
+
+model Shade {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(10)
+  description String?  @db.VarChar(200)
+  isActive    Boolean  @default(true) @map("is_active")
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById String?  @map("created_by") @db.Uuid
+  updatedById String?  @map("updated_by") @db.Uuid
+
+  @@map("shades")
+}
+
+model Caliber {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(10)
+  description String?  @db.VarChar(200)
+  isActive    Boolean  @default(true) @map("is_active")
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById String?  @map("created_by") @db.Uuid
+  updatedById String?  @map("updated_by") @db.Uuid
+
+  @@map("calibers")
+}
+
+model Material {
+  id           String           @id @default(uuid()) @db.Uuid
+  code         String           @unique @db.VarChar(20)
+  name         String           @db.VarChar(80)
+  category     MaterialCategory
+  unit         MaterialUnit
+  /// لما الرصيد يوصل للرقم ده، النظام ينبّه
+  minStock     Decimal          @map("min_stock") @db.Decimal(14, 3)
+  leadTimeDays Int              @map("lead_time_days")
+  notes        String?          @db.VarChar(500)
+  isActive     Boolean          @default(true) @map("is_active")
+  version      Int              @default(1)
+  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById  String?          @map("created_by") @db.Uuid
+  updatedById  String?          @map("updated_by") @db.Uuid
+
+  @@map("materials")
+}
+
+model ProductionLine {
+  id                String      @id @default(uuid()) @db.Uuid
+  code              String      @unique @db.VarChar(20)
+  name              String      @db.VarChar(60)
+  use               ProductUse
+  body              ProductBody
+  capacitySqmPerDay Decimal     @map("capacity_sqm_per_day") @db.Decimal(12, 2)
+  isActive          Boolean     @default(true) @map("is_active")
+  version           Int         @default(1)
+  createdAt         DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById       String?     @map("created_by") @db.Uuid
+  updatedById       String?     @map("updated_by") @db.Uuid
+
+  equipment Equipment[]
+
+  @@map("production_lines")
+}
+
+model Equipment {
+  id          String          @id @default(uuid()) @db.Uuid
+  code        String          @unique @db.VarChar(20)
+  name        String          @db.VarChar(80)
+  type        EquipmentType
+  stage       ProductionStage
+  /// فاضي = معدة مشتركة (زي الطواحين ومجفف الرذاذ)
+  lineId      String?         @map("line_id") @db.Uuid
+  line        ProductionLine? @relation(fields: [lineId], references: [id])
+  notes       String?         @db.VarChar(500)
+  isActive    Boolean         @default(true) @map("is_active")
+  version     Int             @default(1)
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById String?         @map("created_by") @db.Uuid
+  updatedById String?         @map("updated_by") @db.Uuid
+
+  @@index([lineId])
+  @@map("equipment")
+}
+
+model Shift {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique @db.VarChar(5)
+  name        String   @db.VarChar(40)
+  /// "06:00"
+  startTime   String   @map("start_time") @db.Char(5)
+  endTime     String   @map("end_time") @db.Char(5)
+  isActive    Boolean  @default(true) @map("is_active")
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdById String?  @map("created_by") @db.Uuid
+  updatedById String?  @map("updated_by") @db.Uuid
+
+  @@map("shifts")
+}
