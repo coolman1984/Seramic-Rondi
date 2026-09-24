@@ -3,14 +3,23 @@
   "private": true,
   "description": "نظام روندي لإدارة مصنع السيراميك",
   "packageManager": "pnpm@10.33.0",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "dev": "pnpm -r --parallel --filter ./apps/* dev",
-    "build": "pnpm -r build",
-    "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
+    "dev": "pnpm --filter @rondi/shared build && pnpm -r --parallel --filter ./apps/* dev",
+    "build": "pnpm --filter @rondi/shared build && pnpm --filter @rondi/api build && pnpm --filter @rondi/web build",
+    "test": "pnpm --filter @rondi/shared test && pnpm --filter @rondi/api test",
+    "test:e2e": "pnpm --filter @rondi/web test:e2e",
     "typecheck": "pnpm -r typecheck",
     "db:migrate": "pnpm --filter @rondi/api db:migrate",
-    "db:seed": "pnpm --filter @rondi/api db:seed"
+    "db:seed": "pnpm --filter @rondi/api db:seed",
+    "audit:deps": "pnpm audit"
+  },
+  "pnpm": {
+    "overrides": {
+      "mysql2": "^3.23.1",
+      "deepmerge-ts": "^8.0.0"
+    }
   }
 }

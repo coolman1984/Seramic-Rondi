@@ -1,0 +1,11 @@
+# TLS_MODE=internal: شهادة داخلية للشبكة المحلية (الأجهزة لازم تثق في شهادة Caddy مرة واحدة)
+# لو السيرفر ليه اسم على الإنترنت، خلي TLS_MODE = بريدك الإلكتروني عشان شهادة مجانية تلقائية
+{$SITE_ADDRESS} {
+	tls {$TLS_MODE}
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+	reverse_proxy web:3000
+}
