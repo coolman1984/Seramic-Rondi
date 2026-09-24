@@ -1,0 +1,662 @@
+<title>خطة نظام روندي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap">
+<style>
+:root{
+  --page:#EEF0F3; --surface:#FAFAFB; --panel:#FFFFFF; --card:#F2F3F5; --card-2:#ECEEF1;
+  --ink:#16181D; --ink-2:#3A3E46; --muted:#8B9099; --faint:#B7BBC2; --line:#E3E5E9;
+  --accent:#2B59E8; --accent-ink:#FFFFFF; --accent-soft:#E8EEFD;
+  --ok:#1F9D63; --ok-soft:#E3F5EC; --warn:#C98A12; --warn-soft:#FBF1DC; --bad:#D2443A; --bad-soft:#FBE7E5;
+  --sky-1:#F5F6F9; --sky-2:#E3E8F3; --sky-3:#C4D0EC; --cloud:rgba(255,255,255,.9);
+  --dawn-1:#FBF7F4; --dawn-2:#F1ECF3; --dawn-3:#DCE3F4;
+  --dark:#141414; --dark-card:#1D1D1F; --dark-line:#2C2C30; --dark-ink:#F1F1F3; --dark-muted:#8D8F96; --dark-accent:#6E9BFF;
+  --serif:"Noto Naskh Arabic","Amiri","Times New Roman",serif;
+  --sans:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#0B0C0F; --surface:#111317; --panel:#171A1F; --card:#1A1D23; --card-2:#20242B;
+    --ink:#ECEDF0; --ink-2:#C5C8CE; --muted:#8B919C; --faint:#565C66; --line:#262A31;
+    --accent:#5C85F7; --accent-ink:#FFFFFF; --accent-soft:#1B2745;
+    --ok:#3CC487; --ok-soft:#14291F; --warn:#E3AA3E; --warn-soft:#2E2512; --bad:#F06A5F; --bad-soft:#321816;
+    --sky-1:#12151B; --sky-2:#18203A; --sky-3:#253A6E; --cloud:rgba(170,190,235,.14);
+    --dawn-1:#121418; --dawn-2:#171A24; --dawn-3:#1B2645;
+    --dark:#08090B; --dark-card:#131418; --dark-line:#24262B;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0B0C0F; --surface:#111317; --panel:#171A1F; --card:#1A1D23; --card-2:#20242B;
+  --ink:#ECEDF0; --ink-2:#C5C8CE; --muted:#8B919C; --faint:#565C66; --line:#262A31;
+  --accent:#5C85F7; --accent-ink:#FFFFFF; --accent-soft:#1B2745;
+  --ok:#3CC487; --ok-soft:#14291F; --warn:#E3AA3E; --warn-soft:#2E2512; --bad:#F06A5F; --bad-soft:#321816;
+  --sky-1:#12151B; --sky-2:#18203A; --sky-3:#253A6E; --cloud:rgba(170,190,235,.14);
+  --dawn-1:#121418; --dawn-2:#171A24; --dawn-3:#1B2645;
+  --dark:#08090B; --dark-card:#131418; --dark-line:#24262B;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--page);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;padding-inline:16px;padding-block:20px 40px;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+
+.frame{max-width:1120px;margin-inline:auto;background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:10px;overflow:hidden}
+
+/* nav */
+.nav{display:flex;align-items:center;gap:20px;padding:10px 14px 14px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--serif);font-size:20px;font-weight:500}
+.logo svg{width:28px;height:28px}
+.nav-links{display:flex;gap:22px;margin-inline:auto;font-size:13.5px;color:var(--ink-2)}
+.nav-links a{text-decoration:none}
+.nav-links a:hover{color:var(--accent)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13.5px;font-weight:500;padding:7px 14px;border-radius:9px;text-decoration:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(20,30,60,.08)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (max-width:760px){.nav-links{display:none}.nav .btns{margin-inline-start:auto}}
+
+/* hero */
+.hero{position:relative;border-radius:20px;border:1px solid var(--line);overflow:hidden;text-align:center;padding-block:72px 0;padding-inline:20px;
+  background:
+    radial-gradient(60% 30% at 18% 78%,var(--cloud),transparent 70%),
+    radial-gradient(45% 22% at 82% 70%,var(--cloud),transparent 70%),
+    radial-gradient(35% 18% at 60% 92%,var(--cloud),transparent 70%),
+    radial-gradient(30% 14% at 30% 40%,var(--cloud),transparent 70%),
+    linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 55%,var(--sky-3) 100%)}
+.used{font-size:13px;color:var(--muted);margin:0 0 18px}
+.used b{font-family:var(--serif);font-size:16px;color:var(--ink-2);font-weight:600;margin-inline-start:6px}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,52px);line-height:1.35;margin:0 auto 16px;max-width:15em;text-wrap:balance;letter-spacing:-.01em}
+.hero .lede{color:var(--muted);max-width:34em;margin:0 auto 26px;font-size:15.5px}
+.hero .btns{margin-bottom:48px}
+
+/* app mock */
+.mock{position:relative;max-width:920px;margin-inline:auto;background:var(--panel);border:1px solid var(--line);border-bottom:none;border-radius:14px 14px 0 0;text-align:start;font-size:11.5px;line-height:1.55;box-shadow:0 -10px 40px rgba(40,60,120,.10);overflow:hidden;height:300px}
+.mock::after{content:"";position:absolute;inset:auto 0 0 0;height:60px;background:linear-gradient(transparent,var(--panel))}
+.mbar{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line)}
+.mbar .tabs{display:flex;gap:4px;flex-wrap:nowrap;overflow:hidden}
+.tab{padding:3px 9px;border-radius:6px;color:var(--muted);white-space:nowrap}
+.tab.on{background:var(--accent);color:var(--accent-ink)}
+.msearch{margin-inline-start:auto;border:1px solid var(--line);border-radius:6px;padding:3px 10px;color:var(--faint);min-width:120px}
+.avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#D9C6B0,#9F8A74)}
+.mbody{display:grid;grid-template-columns:1.05fr 1.4fr 1.2fr}
+.mcol{padding:12px;border-inline-start:1px solid var(--line)}
+.mcol:first-child{border-inline-start:none}
+.mh{font-weight:600;color:var(--ink-2);margin-bottom:8px;display:flex;justify-content:space-between}
+.mh small{color:var(--faint);font-weight:400}
+.grp{color:var(--faint);font-size:10.5px;margin:10px 0 4px}
+.row{display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;margin-bottom:5px;background:var(--panel)}
+.row .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.chip{font-size:10px;padding:1px 7px;border-radius:999px;white-space:nowrap;background:var(--card);color:var(--ink-2)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.blue{background:var(--accent-soft);color:var(--accent)}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.kpi div{border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+.kpi b{display:block;font-size:15px;font-weight:600;color:var(--ink)}
+.kpi span{color:var(--muted);font-size:10.5px}
+.bubble{background:var(--card);border-radius:8px;padding:8px 10px;margin-bottom:6px;color:var(--ink-2)}
+@media (max-width:760px){.mbody{grid-template-columns:1fr}.mcol:not(.keep){display:none}.mcol.keep{border:none}.msearch{display:none}}
+
+/* sections */
+.sec{padding-block:88px;padding-inline:clamp(12px,6vw,88px)}
+.eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.09em;color:var(--accent);margin:0 0 12px}
+.center{text-align:center}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(25px,3.3vw,34px);line-height:1.45;margin:0 0 12px;text-wrap:balance}
+h2 .dim,.dim{color:var(--muted)}
+.sub{color:var(--muted);max-width:36em;margin:0 auto 44px}
+h3{font-size:15px;font-weight:500;margin:0 0 4px}
+p{margin:0}
+.small{font-size:13px;color:var(--muted)}
+
+/* statement */
+.statement{max-width:760px;margin-inline:auto;font-family:var(--serif);font-size:clamp(21px,2.6vw,29px);line-height:1.6}
+.statement p+p{margin-top:28px;color:var(--muted)}
+
+/* features */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:880px;margin-inline:auto}
+.fcard{background:var(--card);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:18px}
+.fcard.wide{grid-column:1/-1}
+.fcard .desc{color:var(--muted);font-size:13.5px;max-width:34em}
+.minip{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:12.5px;box-shadow:0 8px 24px rgba(30,40,80,.06);margin-top:auto}
+.bar{display:grid;grid-template-columns:minmax(0,11em) 1fr 3.2em;align-items:center;gap:10px;padding:5px 0}
+.bar .track{height:8px;border-radius:4px;background:var(--card-2);overflow:hidden}
+.bar .fill{height:100%;border-radius:4px;background:var(--accent)}
+.bar .fill.bad{background:var(--bad)}
+.bar .v{text-align:end;color:var(--ink-2)}
+.bar .lbl small{display:block;color:var(--faint);font-size:11px;line-height:1.3}
+.label{display:flex;gap:14px;align-items:flex-start}
+.label canvas{width:78px;height:78px;flex:none;image-rendering:pixelated;border-radius:4px;background:#fff;padding:4px}
+.label dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:1px 10px;font-size:12px}
+.label dt{color:var(--muted)} .label dd{margin:0;font-weight:500}
+.reject{margin-top:12px;display:flex;gap:8px;align-items:flex-start;background:var(--bad-soft);color:var(--bad);border-radius:8px;padding:8px 10px;font-size:12px}
+.spark{width:100%;height:70px;display:block}
+.alertline{margin-top:10px;display:flex;gap:8px;align-items:center;background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:7px 10px;font-size:12px}
+
+.more{max-width:880px;margin:64px auto 0}
+.more .eyebrow{border-bottom:1px solid var(--line);padding-bottom:10px}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.mcard{display:flex;flex-direction:column;gap:6px}
+.mcard .ic{height:92px;border-radius:12px;background:var(--card);display:grid;place-items:center;color:var(--muted)}
+.mcard .ic svg{width:34px;height:34px}
+.mcard h3{font-size:13.5px;margin-top:4px}
+.mcard p{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+/* flow */
+.flow{background:linear-gradient(180deg,var(--surface) 0%,var(--dawn-1) 12%,var(--dawn-2) 55%,var(--dawn-3) 100%);border-radius:20px}
+.flow-inner{max-width:880px;margin-inline:auto}
+.flow h2{text-align:start}
+.flow .sub{margin:0 0 40px}
+.frow{display:grid;grid-template-columns:5.5em 1fr;gap:14px;align-items:start;margin-bottom:28px}
+.frow>.eyebrow{margin-top:6px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.glass{background:color-mix(in srgb,var(--panel) 78%,transparent);border:1px solid var(--line);border-radius:16px;padding:20px;backdrop-filter:blur(6px)}
+.glass .ico{color:var(--muted);margin-bottom:8px}
+.quote{margin-top:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px;font-size:14px;color:var(--ink-2);line-height:1.8}
+.quote .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;color:var(--faint)}
+.steps{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.step{display:flex;gap:10px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 11px;font-size:13px}
+.step .si{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:var(--card);font-size:12px;flex:none}
+.step small{display:block;color:var(--muted);font-size:11.5px;line-height:1.4}
+.step.fade{opacity:.55}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chain .c{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px}
+.chain .c small{display:block;color:var(--muted);font-size:11px}
+.chain .arr{color:var(--faint)}
+
+/* tech */
+.tgrid{display:grid;grid-template-columns:1fr 1.05fr 1fr;border:1px solid var(--line);border-radius:4px;max-width:960px;margin-inline:auto}
+.tcell{padding:26px;border-bottom:1px solid var(--line)}
+.tcell h3{font-size:14px}
+.tcell p{font-size:12.5px;color:var(--muted);margin-top:4px}
+.tmid{grid-row:span 2;border-inline:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:7px}
+.tool{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:7px 10px;box-shadow:0 2px 6px rgba(20,30,60,.04)}
+.tool .tl{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex:none;font-size:11px;font-weight:600;color:#fff}
+.tool b{font-weight:500;font-size:13px;display:block;line-height:1.3}
+.tool small{font-family:var(--mono);font-size:10.5px;color:var(--muted);direction:ltr;display:block;text-align:right;line-height:1.4}
+.tfull{grid-column:1/-1;text-align:center;padding:26px;border-bottom:none}
+.tfull p{max-width:40em;margin-inline:auto}
+@media (max-width:820px){.tgrid{grid-template-columns:1fr}.tmid{grid-row:auto;border-inline:none;border-bottom:1px solid var(--line)}}
+
+/* data model */
+.dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:960px;margin-inline:auto}
+.dcard{background:var(--card);border-radius:14px;padding:16px}
+.dcard h3{font-size:13.5px;display:flex;justify-content:space-between;align-items:baseline}
+.dcard h3 span{font-size:11px;color:var(--faint);font-weight:400}
+.dcard ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.dcard li{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:4px 8px}
+.dcard li code{font-family:var(--mono);font-size:10.5px;color:var(--muted);direction:ltr}
+.dcard.key{background:var(--accent-soft)}
+.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:960px;margin:28px auto 0}
+.rule{border-top:1px solid var(--line);padding-top:14px}
+.rule b{display:block;font-weight:500;margin-bottom:4px}
+.rule p{font-size:13px;color:var(--muted)}
+
+/* matrix */
+.mwrap{max-width:960px;margin-inline:auto;overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+th,td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--line)}
+thead th{font-weight:500;font-size:12px;color:var(--muted);vertical-align:bottom;line-height:1.4}
+tbody th{text-align:start;font-weight:500;white-space:nowrap;padding-inline-start:16px}
+tbody tr:last-child>*{border-bottom:none}
+.p{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle}
+.p.f{background:var(--accent)}
+.p.v{border:1.5px solid var(--accent);background:linear-gradient(90deg,transparent 50%,var(--accent) 50%)}
+.p.n{border:1.5px solid var(--faint)}
+.legend{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+
+/* security (dark) */
+.dark{background:var(--dark);color:var(--dark-ink);border-radius:18px;margin-block:10px}
+.dark .eyebrow{color:var(--dark-accent)}
+.dhead{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start;margin-bottom:56px}
+.dhead h2 .dim{color:var(--dark-muted)}
+.dhead p{color:var(--dark-muted);font-size:14px}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.scard{background:var(--dark-card);border:1px solid var(--dark-line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.scard .art{height:110px;display:grid;place-items:center;color:#5A5D66;margin-bottom:10px}
+.scard .art svg{width:88px;height:88px}
+.scard h3{color:var(--dark-ink);font-size:14px}
+.scard p{color:var(--dark-muted);font-size:12.5px;line-height:1.65}
+.extra{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:40px}
+.extra div{border-top:1px solid var(--dark-line);padding-top:14px}
+.extra b{display:block;font-weight:500;font-size:14px;margin-bottom:4px}
+.extra p{color:var(--dark-muted);font-size:12.5px}
+.deploy{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:12px}
+.deploy .ic{color:#6E7079;margin-bottom:10px}
+.deploy b{display:flex;gap:8px;align-items:center;font-weight:500;font-size:14px;margin-bottom:4px}
+.deploy p{color:var(--dark-muted);font-size:12.5px}
+.rec{font-size:10.5px;background:rgba(110,155,255,.16);color:var(--dark-accent);border-radius:999px;padding:1px 8px;font-weight:500}
+
+/* timeline */
+.gantt{max-width:960px;margin-inline:auto;display:flex;flex-direction:column;gap:6px}
+.grow{display:grid;grid-template-columns:minmax(0,15em) 1fr;gap:14px;align-items:center}
+.gname{font-size:13.5px}
+.gname small{display:block;color:var(--muted);font-size:11.5px;line-height:1.4}
+.gtrack{position:relative;height:30px;background:repeating-linear-gradient(to left,transparent 0,transparent calc(100%/19 - 1px),var(--line) calc(100%/19 - 1px),var(--line) calc(100%/19));border-radius:6px}
+.gbar{position:absolute;top:5px;bottom:5px;border-radius:5px;background:var(--accent);color:var(--accent-ink);font-size:11px;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.gbar.last{background:var(--ink);color:var(--surface)}
+.gscale{display:grid;grid-template-columns:minmax(0,15em) 1fr;gap:14px;font-size:11px;color:var(--muted)}
+.gscale .ticks{display:flex;justify-content:space-between}
+.note{max-width:960px;margin:22px auto 0;background:var(--card);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--ink-2)}
+@media (max-width:620px){.grow,.gscale{grid-template-columns:1fr;gap:4px}.gscale>span:first-child{display:none}}
+
+/* faq */
+.faq{max-width:720px;margin-inline:auto}
+.faq h2{margin-bottom:26px}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;padding:14px 2px;font-size:14px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--muted);font-size:18px;line-height:1}
+details[open] summary::after{content:"−"}
+details .ans{padding:0 2px 16px;color:var(--muted);font-size:13.5px}
+details .ans b{color:var(--ink-2);font-weight:500}
+
+/* cta */
+.cta{border-radius:20px;text-align:center;padding-block:96px 40px;padding-inline:20px;
+  background:
+    radial-gradient(50% 30% at 20% 30%,var(--cloud),transparent 70%),
+    radial-gradient(40% 25% at 85% 45%,var(--cloud),transparent 70%),
+    linear-gradient(180deg,var(--sky-3) 0%,var(--sky-2) 45%,var(--sky-1) 100%)}
+.cta h2{font-size:clamp(24px,3vw,32px);margin-bottom:22px}
+.foot{margin-top:80px;font-size:11.5px;color:var(--muted)}
+
+@media (max-width:900px){.sgrid,.mgrid{grid-template-columns:1fr 1fr}.dgrid,.rules{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){
+  .fgrid,.pair{grid-template-columns:1fr}
+  .dhead{grid-template-columns:1fr;gap:16px}
+  .extra,.deploy{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr;gap:6px}
+  .sec{padding-block:64px}
+}
+@media (max-width:480px){.sgrid,.mgrid,.dgrid,.rules{grid-template-columns:1fr}.bar{grid-template-columns:minmax(0,8.5em) 1fr 3em}}
+</style>
+
+<div dir="rtl" lang="ar">
+<div class="frame">
+
+  <nav class="nav" aria-label="القائمة">
+    <a class="logo" href="#top">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2.5" fill="currentColor" opacity=".85"/><rect x="17" y="3" width="12" height="12" rx="2.5" fill="currentColor" opacity=".35"/><rect x="3" y="17" width="12" height="12" rx="2.5" fill="currentColor" opacity=".35"/><rect x="17" y="17" width="12" height="12" rx="2.5" fill="currentColor" opacity=".6"/></svg>
+      روندي
+    </a>
+    <div class="nav-links">
+      <a href="#systems">الأنظمة</a>
+      <a href="#tech">التقنيات</a>
+      <a href="#data">قاعدة البيانات</a>
+      <a href="#security">الأمان</a>
+      <a href="#timeline">المراحل</a>
+    </div>
+    <div class="btns">
+      <a class="btn" href="#faq">أسئلة ليك</a>
+      <a class="btn primary" href="#approve">موافقة الخطة</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <p class="used">خطة مبدئية لمصنع <b>سيراميك وبورسلين</b></p>
+    <h1>مصنع شغال ٢٤ ساعة، ونظام صاحي معاه كل وردية</h1>
+    <p class="lede">نظام واحد يربط الخط بالفرن بالمخزن بالتاجر بالفلوس. كل متر بيتحسب، كل بالتة ليها كود، وكل مشكلة بتوصل للإدارة في ساعتها.</p>
+    <div class="btns">
+      <a class="btn primary" href="#systems">شوف الأنظمة</a>
+      <a class="btn" href="#timeline">المراحل والمدة</a>
+    </div>
+
+    <div class="mock" aria-label="شكل مبدئي لشاشة النظام">
+      <div class="mbar">
+        <strong style="font-family:var(--serif);font-size:13px">روندي</strong>
+        <div class="tabs"><span class="tab on">اللوحة</span><span class="tab">الإنتاج</span><span class="tab">الجودة</span><span class="tab">المخازن</span><span class="tab">الصيانة</span><span class="tab">المبيعات</span></div>
+        <span class="msearch">دور على بالتة أو طلبية…</span>
+        <span class="avatar" aria-hidden="true"></span>
+      </div>
+      <div class="mbody">
+        <div class="mcol">
+          <div class="mh">الوردية ب <small>٢ م — ١٠ م</small></div>
+          <div class="kpi num">
+            <div><b>٤٬٢٠٠ م²</b><span>إنتاج لحد دلوقتي</span></div>
+            <div><b>٨٦٫٤٪</b><span>فرز أول</span></div>
+            <div><b>٣٫١٪</b><span>هالك</span></div>
+            <div><b>١٫٢٤</b><span>م³ غاز لكل م²</span></div>
+          </div>
+          <div class="bubble">خط ٢ متأخر ٣٪ عن خطة النهارده بسبب وقفة المكبس.</div>
+        </div>
+        <div class="mcol keep">
+          <div class="mh">تنبيهات لحظية <small>٥ جديدة</small></div>
+          <div class="grp">محتاجة تصرف (٣)</div>
+          <div class="row"><span class="dot" style="background:var(--bad)"></span><span class="t">هالك الفرن ٢ عدّى ٦٪ في آخر ساعة</span><span class="chip bad">جودة</span></div>
+          <div class="row"><span class="dot" style="background:var(--warn)"></span><span class="t">فريت أبيض هيخلص خلال ٤ أيام</span><span class="chip warn">خامات</span></div>
+          <div class="row"><span class="dot" style="background:var(--warn)"></span><span class="t">غاز الوردية ج أعلى من المعتاد ١٨٪</span><span class="chip warn">طاقة</span></div>
+          <div class="grp">للمتابعة (٢)</div>
+          <div class="row"><span class="dot" style="background:var(--accent)"></span><span class="t">طلبية ٤٤١٢ اتحجزت كاملة من المخزن</span><span class="chip blue">مبيعات</span></div>
+          <div class="row"><span class="dot" style="background:var(--ok)"></span><span class="t">صيانة المكبس ٣ الدورية خلصت</span><span class="chip ok">صيانة</span></div>
+        </div>
+        <div class="mcol">
+          <div class="mh">الفرن ٢ — تفاصيل</div>
+          <div class="bubble">أكتر عيب: <b>تشقق بعد الحرق</b> على موديل رويال ٦٠×٦٠.</div>
+          <div class="bubble">نفس العيب ظهر من أسبوعين بعد تغيير منحنى الحرارة.</div>
+          <div class="row"><span class="t">اقتراح: مراجعة منطقة التبريد</span><span class="chip">مهمة</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sec">
+    <div class="statement">
+      <p>أغلب المصانع بتتدار بورق وإكسيل متفرق. الإنتاج في دفتر، والفرز في دفتر، والمخزن في دفتر، والحسابات في برنامج تاني. كل قسم شايف حتته بس.</p>
+      <p>روندي مختلف. نظام واحد، أي رقم بيتسجل في الأرض بيوصل لوحده للمخزن والتكلفة والإدارة. فتعرف الهالك جاي منين، والمتر بيكلفك كام فعلاً، والغاز رايح فين.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="systems" style="padding-top:0">
+    <div class="center">
+      <p class="eyebrow">الأنظمة الـ ١١</p>
+      <h2>معمول عشان يحمي المتر من الهالك، والفلوس من الضياع</h2>
+      <p class="sub">كل نظام شغال لوحده، ومتوصل بالباقي. دي أهم ٣ حاجات هتحس بفرقها من أول شهر.</p>
+    </div>
+
+    <div class="fgrid">
+      <article class="fcard wide">
+        <div>
+          <h3>الهالك جاي منين؟ النظام هيقولك</h3>
+          <p class="desc">كل تالف بيتسجل بمرحلته وسببه وورديته وخطه. التحليل بيطلعلك أكبر ٤ أسباب بترمي فلوسك، مش بس النسبة الإجمالية.</p>
+        </div>
+        <div class="minip num">
+          <div class="mh" style="font-size:12.5px">أسباب الهالك — الأسبوع ده <small>٦٬٨٤٠ م² تالف</small></div>
+          <div class="bar"><div class="lbl">تشقق بعد الحرق<small>الفرن ٢</small></div><div class="track"><div class="fill bad" style="width:100%"></div></div><div class="v">٣٨٪</div></div>
+          <div class="bar"><div class="lbl">تنقير في الطلا<small>خط التزجيج ١</small></div><div class="track"><div class="fill" style="width:57.9%"></div></div><div class="v">٢٢٪</div></div>
+          <div class="bar"><div class="lbl">تقوّس البلاطة<small>الفرن ١</small></div><div class="track"><div class="fill" style="width:44.7%"></div></div><div class="v">١٧٪</div></div>
+          <div class="bar"><div class="lbl">كسر حواف<small>المناولة والتغليف</small></div><div class="track"><div class="fill" style="width:28.9%"></div></div><div class="v">١١٪</div></div>
+        </div>
+      </article>
+
+      <article class="fcard">
+        <div>
+          <h3>كل بالتة ليها كود، ومفيش خلط درجات</h3>
+          <p class="desc">الكود بيتطبع على البالتة ويتمسح بالموبايل. لو حد حاول يحمّل درجة لون مختلفة على نفس الطلبية، النظام بيرفض.</p>
+        </div>
+        <div class="minip">
+          <div class="label">
+            <canvas id="qr" width="25" height="25" aria-label="كود البالتة"></canvas>
+            <dl class="num">
+              <dt>الموديل</dt><dd>رويال رخامي</dd>
+              <dt>المقاس</dt><dd>٦٠×٦٠ سم</dd>
+              <dt>الفرز</dt><dd>أول</dd>
+              <dt>درجة اللون</dt><dd>ب٣ · عيار ٢</dd>
+              <dt>التشغيلة</dt><dd>٢٦٠٩١٤-ب</dd>
+              <dt>الكمية</dt><dd>٥٦ كرتونة · ٨٠٫٦٤ م²</dd>
+            </dl>
+          </div>
+          <div class="reject num"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="flex:none;margin-top:2px"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 12.5l9-9" stroke="currentColor" stroke-width="1.5"/></svg><span>مرفوض: طلبية ٤٤١٢ متحمّل عليها درجة ب٢، ومينفعش تتخلط مع ب٣.</span></div>
+        </div>
+      </article>
+
+      <article class="fcard">
+        <div>
+          <h3>الغاز والكهربا لكل متر، مش لكل شهر</h3>
+          <p class="desc">قراءة العدادات كل وردية، والنظام بيقسمها على الأمتار الطالعة. أي زيادة عن المعتاد بتوصل تنبيه فوراً.</p>
+        </div>
+        <div class="minip num">
+          <div class="mh" style="font-size:12.5px">م³ غاز لكل م² — آخر ١٤ وردية <small>المعتاد ١٫٢٠</small></div>
+          <svg class="spark" id="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div class="alertline"><span>▲</span><span>الوردية ج: ١٫٤٢ م³/م²، أعلى من المعتاد بـ ١٨٪</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="more">
+      <p class="eyebrow">وكمان…</p>
+      <div class="mgrid">
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 20h18M6 20V10l4 3V9l4 3V6l4 3v11"/></svg></div><h3>متابعة الإنتاج</h3><p>كميات كل مرحلة، كل وردية، كل خط، والتالف بسببه.</p></div>
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 8l8-4 8 4-8 4-8-4zM4 8v8l8 4 8-4V8M12 12v8"/></svg></div><h3>مخزن الخامات</h3><p>وارد ومنصرف ورصيد، وتنبيه قبل ما الخامة تخلص.</p></div>
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></div><h3>الصيانة</h3><p>جدول دوري للأفران والمكابس، والعطل بوقته وتكلفته.</p></div>
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 010 6M21 20c0-2.8-1.8-5-4-5.7"/></svg></div><h3>المبيعات والتجار</h3><p>الطلبيات، الحجز من المخزن، المديونية والتحصيل.</p></div>
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 7h12v9H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg></div><h3>الشحن</h3><p>أذون التحميل، العربيات، ومواعيد التسليم.</p></div>
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7 14h4M7 17h7"/></svg></div><h3>تخطيط الإنتاج</h3><p>خطة أسبوعية وشهرية حسب الطلبيات وطاقة الخطوط.</p></div>
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h8"/></svg></div><h3>تكلفة المتر</h3><p>خامات وطاقة وعمالة وصيانة وهالك، بالفعلي.</p></div>
+        <div class="mcard"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg></div><h3>لوحة الإدارة</h3><p>مؤشرات لحظية وتنبيهات فورية على الموبايل.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec flow" id="links">
+    <div class="flow-inner">
+      <h2>الأنظمة بتكلم بعض،<br><span class="dim">انت بتسجل مرة واحدة بس.</span></h2>
+      <p class="sub">المشرف مش هيدخل الرقم في ٥ أماكن. بيسجله مرة، والنظام بيوزعه على كل قسم محتاجه.</p>
+
+      <div class="frow">
+        <p class="eyebrow">في الأرض</p>
+        <div class="pair">
+          <div class="glass">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div>
+            <h3>مشرف الوردية بيسجل…</h3>
+            <p class="small">من التابلت على الخط، حتى لو النت قاطع.</p>
+            <div class="quote num">الوردية ب: خط ٢ طلّع ٤٬٢٠٠ م² من رويال رخامي ٦٠×٦٠. الفرز: ٨٦٫٤٪ أول، ٧٫٢٪ تاني، ٣٫٣٪ تالت، ٣٫١٪ هالك. درجة اللون ب٣.
+              <div class="foot"><span>+ صورة للعيب</span><span class="btn primary" style="padding:3px 12px;font-size:12px">حفظ</span></div>
+            </div>
+          </div>
+          <div class="glass">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="6" width="16" height="13" rx="3"/><path d="M12 2v4M9 12h.01M15 12h.01"/></svg></div>
+            <h3>والنظام لوحده بيعمل…</h3>
+            <p class="small">في نفس اللحظة، من غير ما حد يعيد الإدخال.</p>
+            <div class="steps">
+              <div class="step"><span class="si">١</span><div>يخصم الخامات من المخزن<small>حسب تركيبة الموديل</small></div></div>
+              <div class="step"><span class="si">٢</span><div>يطبع أكواد البالتات<small>بالدرجة والتشغيلة</small></div></div>
+              <div class="step"><span class="si">٣</span><div>يحسب الغاز والكهربا لكل متر<small>من قراءة عدادات الوردية</small></div></div>
+              <div class="step fade"><span class="si">٤</span><div>يحدّث تكلفة المتر ولوحة الإدارة<small>وينبّه لو الهالك عدّى الحد</small></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="frow">
+        <p class="eyebrow">الدورة</p>
+        <div class="glass">
+          <h3>رحلة الطلبية من التاجر لحد التحصيل</h3>
+          <p class="small" style="margin-bottom:14px">كل خطوة بتسلّم اللي بعدها. أي حاجة واقفة بتبان على اللوحة.</p>
+          <div class="chain">
+            <span class="c">طلبية التاجر<small>المبيعات</small></span><span class="arr">←</span>
+            <span class="c">حجز من المخزن<small>أو دخول الخطة</small></span><span class="arr">←</span>
+            <span class="c">صرف خامات<small>مخزن الخامات</small></span><span class="arr">←</span>
+            <span class="c">إنتاج وفرز<small>بالوردية والدرجة</small></span><span class="arr">←</span>
+            <span class="c">بالتة بكود<small>المخزن التام</small></span><span class="arr">←</span>
+            <span class="c">إذن تحميل<small>الشحن</small></span><span class="arr">←</span>
+            <span class="c">فاتورة ومديونية<small>الحسابات</small></span><span class="arr">←</span>
+            <span class="c">تحصيل<small>ويتقفل الحساب</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="tech">
+    <div class="center">
+      <p class="eyebrow">التقنيات</p>
+      <h2>أدوات حديثة ومشهورة، <span class="dim">وسهل تلاقي حد يكمّل عليها.</span></h2>
+      <p class="sub">الأسماء الإنجليزي تحت كل أداة للمبرمج اللي هيستلم بعدين. انت يهمك السبب اللي جنبها.</p>
+    </div>
+    <div class="tgrid">
+      <div class="tcell"><h3>لغة واحدة من الشاشة لقاعدة البيانات</h3><p>النظام كله مكتوب بلغة واحدة من أشهر لغات العالم. أي مبرمج يقدر يمسك أي جزء من غير ما يتعلم حاجة جديدة.</p></div>
+      <div class="tmid">
+        <div class="tool"><span class="tl" style="background:#111">ش</span><div><b>الشاشات والتطبيق</b><small>Next.js · React · TypeScript</small></div></div>
+        <div class="tool"><span class="tl" style="background:#D9224C">خ</span><div><b>الخادم والمنطق والصلاحيات</b><small>NestJS · TypeScript</small></div></div>
+        <div class="tool"><span class="tl" style="background:#336791">ق</span><div><b>قاعدة البيانات</b><small>PostgreSQL</small></div></div>
+        <div class="tool"><span class="tl" style="background:#2D3748">و</span><div><b>التعامل مع القاعدة</b><small>Prisma</small></div></div>
+        <div class="tool"><span class="tl" style="background:#5A0FC8">ن</span><div><b>الشغل من غير نت</b><small>PWA · IndexedDB</small></div></div>
+        <div class="tool"><span class="tl" style="background:#C6302B">ط</span><div><b>التنبيهات والمهام المجدولة</b><small>Redis · BullMQ</small></div></div>
+        <div class="tool"><span class="tl" style="background:#1D63ED">ت</span><div><b>التشغيل والرفع</b><small>Docker Compose</small></div></div>
+        <div class="tool"><span class="tl" style="background:#6E9F18">ف</span><div><b>الاختبارات</b><small>Vitest · Playwright</small></div></div>
+      </div>
+      <div class="tcell"><h3>قاعدة بيانات صارمة في الأرقام</h3><p>من أقوى قواعد البيانات للفلوس والمخازن. العملية يا تتسجل كاملة يا متتسجلش خالص، مفيش رصيد يبوظ في النص.</p></div>
+      <div class="tcell"><h3>يتثبت على الموبايل والتابلت</h3><p>من غير متجر تطبيقات. الشاشة بتحفظ الشغل لو النت قطع، وتبعته لوحدها أول ما يرجع.</p></div>
+      <div class="tcell"><h3>الأكواد والطباعة</h3><p>كود مربع على كل بالتة، يتطبع على طابعة ملصقات، ويتمسح بكاميرا الموبايل أو بمسدس الباركود.</p></div>
+      <div class="tcell tfull"><h3>الربط مع برنامج الحسابات</h3><p>تصدير لجداول إكسيل ومستندات جاهزة للطباعة، وبوابة ربط آمنة بمفتاح خاص يقدر أي برنامج حسابات يسحب منها الفواتير والتحصيل والمخزون.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="data" style="padding-top:0">
+    <div class="center">
+      <p class="eyebrow">قاعدة البيانات</p>
+      <h2>٨ مجموعات مترابطة، <span class="dim">والتشغيلة هي العمود الفقري.</span></h2>
+      <p class="sub">كل مجموعة بتخدم نظام، والتشغيلة بتربطهم: من الخامة اللي اتصرفت لها، لحد التاجر اللي استلمها.</p>
+    </div>
+    <div class="dgrid">
+      <div class="dcard"><h3>الأساس <span>م١</span></h3><ul><li>المستخدمين<code>users</code></li><li>الأدوار والصلاحيات<code>roles</code></li><li>الموديلات<code>products</code></li><li>المقاسات<code>sizes</code></li><li>درجات اللون<code>shades</code></li><li>الخطوط والأفران<code>lines</code></li><li>الورديات<code>shifts</code></li></ul></div>
+      <div class="dcard key"><h3>الإنتاج <span>م٢</span></h3><ul><li>أوامر الإنتاج<code>prod_orders</code></li><li>التشغيلات<code>batches</code></li><li>كميات المراحل<code>stage_entries</code></li><li>التالف وسببه<code>scrap</code></li></ul></div>
+      <div class="dcard"><h3>الجودة <span>م٢</span></h3><ul><li>نتايج الفرز<code>sorting</code></li><li>العيوب<code>defects</code></li><li>أنواع العيوب<code>defect_types</code></li><li>الفحوصات<code>inspections</code></li></ul></div>
+      <div class="dcard"><h3>المخازن <span>م٣</span></h3><ul><li>البالتات<code>pallets</code></li><li>الخامات<code>materials</code></li><li>دفتر الحركات<code>stock_moves</code></li><li>الحجوزات<code>reservations</code></li><li>الجرد<code>stock_counts</code></li></ul></div>
+      <div class="dcard"><h3>الصيانة والطاقة <span>م٤</span></h3><ul><li>المعدات<code>assets</code></li><li>خطط الصيانة<code>pm_plans</code></li><li>الأعطال والوقفات<code>downtimes</code></li><li>قراءات العدادات<code>meters</code></li></ul></div>
+      <div class="dcard"><h3>المبيعات والشحن <span>م٥</span></h3><ul><li>العملاء<code>customers</code></li><li>الطلبيات<code>sales_orders</code></li><li>أذون التحميل<code>loadings</code></li><li>الفواتير والتحصيل<code>invoices</code></li><li>حساب العميل<code>ledger</code></li></ul></div>
+      <div class="dcard"><h3>التخطيط والتكلفة <span>م٦</span></h3><ul><li>الخطط<code>plans</code></li><li>طاقة الخطوط<code>capacity</code></li><li>فترات التكلفة<code>cost_periods</code></li><li>تكلفة المتر<code>unit_costs</code></li></ul></div>
+      <div class="dcard"><h3>الرقابة <span>كل المراحل</span></h3><ul><li>سجل العمليات<code>audit_log</code></li><li>تاريخ التعديلات<code>history</code></li><li>الجلسات<code>sessions</code></li><li>التنبيهات<code>alerts</code></li></ul></div>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>الرصيد = مجموع الحركات</b><p>محدش بيكتب رصيد بإيده. الرصيد بيتحسب من دفتر وارد ومنصرف، زي حساب البنك بالظبط.</p></div>
+      <div class="rule"><b>مفيش مسح نهائي</b><p>الغلط بيتصلح بحركة عكسية ليها سبب واسم اللي عملها. الأصل بيفضل موجود.</p></div>
+      <div class="rule"><b>كل تعديل بقيمته القديمة</b><p>أي تغيير بيتسجل: كان كام، بقى كام، مين، إمتى، ومن أنهي جهاز.</p></div>
+      <div class="rule"><b>الوحدات محسوبة صح</b><p>كل موديل عارف الكرتونة كام متر والبالتة كام كرتونة، فالمتر والكرتونة والبالتة متطابقين دايماً.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="roles" style="padding-top:0">
+    <div class="center">
+      <p class="eyebrow">المستخدمين والصلاحيات</p>
+      <h2>كل واحد يشوف اللي يخصه، <span class="dim">ويعمل اللي يخصه بس.</span></h2>
+      <p class="sub">دي نقطة البداية المقترحة. تتعدل من شاشة الصلاحيات من غير مبرمج.</p>
+    </div>
+    <div class="mwrap">
+      <table>
+        <thead><tr><th></th><th>مدير المصنع</th><th>مدير الإنتاج</th><th>مشرف الوردية</th><th>الجودة</th><th>أمين المخزن</th><th>الصيانة</th><th>المبيعات</th><th>الحسابات</th><th>الإدارة العليا</th></tr></thead>
+        <tbody id="matrix"></tbody>
+      </table>
+    </div>
+    <div class="legend"><span><i class="p f"></i> تسجيل وتعديل</span><span><i class="p v"></i> عرض بس</span><span><i class="p n"></i> مش ظاهر ليه</span><span>* المشرف بيشوف ورديته بس، وبيبلّغ عن الأعطال</span></div>
+  </section>
+
+  <section class="sec dark" id="security">
+    <div class="dhead">
+      <h2>أمان صارم لبيانات المصنع <span class="dim">وفلوسه، من أول يوم.</span></h2>
+      <p>الأمان مش مرحلة في الآخر. كل شاشة بتتبني وهي محمية، وفي آخر كل مرحلة مراجعة كاملة وتقرير مكتوب بالنتيجة.</p>
+    </div>
+    <p class="eyebrow">طبقات الحماية</p>
+    <div class="sgrid">
+      <div class="scard"><div class="art"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1"><rect x="18" y="34" width="44" height="34" rx="6"/><path d="M27 34V24a13 13 0 0126 0v10"/><circle cx="40" cy="49" r="4"/><path d="M40 53v7"/></svg></div><h3>دخول آمن</h3><p>كلمة السر بتتحفظ متشفرة بطريقة ماتترجعش. قفل مؤقت بعد ٥ محاولات غلط، ورمز إضافي من الموبايل للإدارة والحسابات.</p></div>
+      <div class="scard"><div class="art"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1"><rect x="10" y="12" width="60" height="56" rx="6"/><path d="M10 26h60M22 38h36M22 48h24M22 58h30"/></svg></div><h3>صلاحيات على السيرفر</h3><p>كل طلب بيتفحص على السيرفر نفسه. إخفاء الزرار من الشاشة مش كفاية، ومحدش يقدر يلف عليه.</p></div>
+      <div class="scard"><div class="art"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1"><path d="M22 10h28l10 10v50H22z"/><path d="M50 10v10h10M30 34h22M30 44h22M30 54h14"/></svg></div><h3>سجل ميتمسحش</h3><p>مين عمل إيه وإمتى ومنين، بالقيمة القديمة والجديدة. حتى مدير النظام مايقدرش يعدّل فيه أو يمسحه.</p></div>
+      <div class="scard"><div class="art"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1"><path d="M40 8l26 10v20c0 17-11 28-26 34-15-6-26-17-26-34V18z"/><path d="M29 40l8 8 15-16"/></svg></div><h3>ضد الثغرات المشهورة</h3><p>فحص كل مدخل، منع حقن الأوامر، وقائمة أشهر ١٠ ثغرات في العالم بتتراجع بند بند في آخر كل مرحلة.</p></div>
+    </div>
+    <div class="extra">
+      <div><b>تشفير</b><p>كل البيانات متشفرة وهي ماشية على الشبكة، والحساسة منها متشفرة وهي متخزنة.</p></div>
+      <div><b>مفيش مفتاح سري في الكود</b><p>كل المفاتيح وكلمات السر في ملف إعدادات منفصل على السيرفر، برا الكود خالص.</p></div>
+      <div><b>نسخة احتياطية كل يوم</b><p>تلقائي بالليل، متشفرة، ونسخة برا المصنع. وتجربة استرجاع كل شهر نتأكد إنها شغالة.</p></div>
+    </div>
+    <p class="eyebrow" style="margin-top:56px">مكان السيرفر (محتاج رأيك)</p>
+    <div class="deploy">
+      <div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.01M8 17.5h.01"/></svg></div><b>جوه المصنع <span class="rec">مقترح</span></b><p>الشبكة الداخلية شغالة حتى لو النت برا قطع. الإدارة بتدخل من برا بوصلة آمنة، والنسخ الاحتياطي بيطلع برا المصنع.</p></div>
+      <div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 18a4.5 4.5 0 01-.5-9 6 6 0 0111.4 1.5A3.8 3.8 0 0117.5 18z"/></svg></div><b>سيرفر سحابي خاص</b><p>مفيش جهاز تشيل همّه، والإدارة تدخل من أي مكان. بس أرض المصنع هتعتمد أكتر على النت.</p></div>
+      <div><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><b>الاتنين مع بعض</b><p>سيرفر في المصنع ونسخة سحابية متزامنة. أمان أعلى وتكلفة أعلى شوية.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="timeline">
+    <div class="center">
+      <p class="eyebrow">المراحل والمدة التقريبية</p>
+      <h2>٨ مراحل في حوالي ٤ شهور ونص، <span class="dim">وكل مرحلة بتتسلم شغالة.</span></h2>
+      <p class="sub">كل مرحلة بتخلص بتجربة على بيانات مصنع حقيقية، واختبارات، ومراجعة أمان، وملخص ليك بالقرارات المطلوبة.</p>
+    </div>
+    <div class="gantt num" id="gantt"></div>
+    <div class="note">المدة دي شاملة وقت تجربتكم وملاحظاتكم. لو ردودكم سريعة، ممكن تقصر. الشغل بيبدأ بعد موافقتك على الخطة دي والإجابة على الأسئلة اللي تحت.</div>
+  </section>
+
+  <section class="sec" id="faq" style="padding-top:0">
+    <div class="faq">
+      <p class="eyebrow">محتاج رأيك</p>
+      <h2>قبل ما أبدأ، <span class="dim">عندي كام سؤال.</span></h2>
+      <details open><summary>١. السيرفر يكون فين؟</summary><div class="ans">اقتراحي <b>سيرفر جوه المصنع</b>، عشان الأرض تفضل شغالة لو النت برا قطع، مع نسخة احتياطية برا المصنع ودخول آمن للإدارة من بيوتهم.</div></details>
+      <details><summary>٢. إيه اللي يشتغل من غير نت؟</summary><div class="ans">اقتراحي: <b>تسجيل الإنتاج والفرز والأعطال وقراءات العدادات يكمل من غير نت</b>. لكن <b>الحجز وصرف البالتات والفلوس لازم اتصال</b>، عشان محدش يصرف نفس البالتة مرتين.</div></details>
+      <details><summary>٣. برنامج الحسابات اللي عندكم اسمه إيه؟</summary><div class="ans">عشان أجهّز ملفات التصدير بنفس الشكل اللي بيقبله بالظبط.</div></details>
+      <details><summary>٤. عندكم طابعات ملصقات ومسدسات باركود؟</summary><div class="ans">لو موجودة قولّي نوعها. لو لأ، هقترح أنواع رخيصة ومتوفرة في مصر، والموبايل يقدر يمسح بالكاميرا لحد ما تيجي.</div></details>
+      <details><summary>٥. بتسجلوا العيار (فرق المقاس) مع درجة اللون؟</summary><div class="ans">في مصانع كتير البلاطة ليها <b>درجة لون وعيار</b> مع بعض، والاتنين لازم يتطابقوا في الطلبية. لو بتسجلوه، هيتمنع خلطه زي درجة اللون بالظبط.</div></details>
+      <details><summary>٦. التكلفة تتحسب إزاي؟</summary><div class="ans">اقتراحي <b>التكلفة الفعلية لكل شهر</b>: كل مصاريف الشهر على الأمتار الطالعة فعلاً، مع توزيع حسب كل موديل ومقاس. ولو عندكم تكلفة معيارية، نقارن بيها ونطلّع الفرق.</div></details>
+      <details><summary>٧. عدد تقريبي: خطوط، أفران، ومستخدمين؟</summary><div class="ans">عشان أظبط البيانات التجريبية وقوة السيرفر على قدكم.</div></details>
+      <details><summary>٨. في بيانات قديمة على إكسيل عايزين ننقلها؟</summary><div class="ans">زي أرصدة المخزن، العملاء ومديونياتهم، والموديلات. لو في، هعمل شاشة استيراد في المرحلة المناسبة.</div></details>
+      <details><summary>٩. الواجهة عربي بس، ولا عربي وإنجليزي؟</summary><div class="ans">اقتراحي عربي بس دلوقتي، والنظام متجهّز يضيف الإنجليزي بعدين من غير إعادة شغل.</div></details>
+    </div>
+  </section>
+
+  <section class="cta" id="approve">
+    <h2>موافقتك على الخطة = بداية المرحلة الأولى.<br><span class="dim">رد عليّا في المحادثة.</span></h2>
+    <div class="btns"><a class="btn primary" href="#faq">راجع الأسئلة</a></div>
+    <p class="foot">© ٢٠٢٦ روندي — خطة مبدئية للمراجعة، قابلة للتعديل.</p>
+  </section>
+
+</div>
+</div>
+
+<script>
+(function(){
+  // pseudo QR pattern for the pallet label (illustrative only)
+  var c=document.getElementById('qr'); if(c){var x=c.getContext('2d'),n=25,s=20914;
+    x.fillStyle='#fff';x.fillRect(0,0,n,n);x.fillStyle='#111';
+    function r(){s=(s*9301+49297)%233280;return s/233280}
+    for(var i=0;i<n;i++)for(var j=0;j<n;j++){if(r()>.52)x.fillRect(i,j,1,1)}
+    [[0,0],[n-7,0],[0,n-7]].forEach(function(p){x.fillStyle='#fff';x.fillRect(p[0]-1<0?0:p[0]-1,p[1]-1<0?0:p[1]-1,8,8);x.fillStyle='#111';x.fillRect(p[0],p[1],7,7);x.fillStyle='#fff';x.fillRect(p[0]+1,p[1]+1,5,5);x.fillStyle='#111';x.fillRect(p[0]+2,p[1]+2,3,3)});
+  }
+
+  // gas per m2 sparkline: 14 shifts, scale 1.00–1.50
+  var v=[1.18,1.21,1.19,1.22,1.20,1.17,1.21,1.23,1.19,1.20,1.22,1.21,1.26,1.42];
+  var sv=document.getElementById('spark');
+  if(sv){var W=300,H=70,lo=1.0,hi=1.5,pad=6;
+    function X(i){return W-pad-(i*(W-2*pad)/(v.length-1))}   // RTL: time runs right→left
+    function Y(y){return H-pad-((y-lo)/(hi-lo))*(H-2*pad)}
+    var pts=v.map(function(y,i){return X(i).toFixed(1)+','+Y(y).toFixed(1)}).join(' ');
+    var base=Y(1.20).toFixed(1);
+    sv.innerHTML=
+      '<line x1="0" x2="'+W+'" y1="'+base+'" y2="'+base+'" stroke="var(--faint)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke"/>'+
+      '<polygon points="'+X(0)+','+H+' '+pts+' '+X(v.length-1)+','+H+'" fill="var(--accent-soft)"/>'+
+      '<polyline points="'+pts+'" fill="none" stroke="var(--accent)" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>'+
+      '<circle cx="'+X(v.length-1)+'" cy="'+Y(v[v.length-1])+'" r="3.5" fill="var(--warn)"/>';
+  }
+
+  // permissions matrix  f=full v=view n=none
+  var rows=[
+    ['متابعة الإنتاج','f f f* v n v n n v'],
+    ['الجودة والفرز','f v v f n n n n v'],
+    ['مخزن المنتج التام','v v n v f n v v v'],
+    ['مخزن الخامات','v v v n f n n v v'],
+    ['الصيانة','f v v* n n f n v v'],
+    ['الطاقة','f v v n n f n v v'],
+    ['المبيعات والتحصيل','v n n n n n f f v'],
+    ['الشحن والتوزيع','v n n n f n f v v'],
+    ['تخطيط الإنتاج','f f v n v v v n v'],
+    ['تكلفة المنتج','v n n n n n n f v'],
+    ['لوحة الإدارة','f v n n n n n v f']
+  ];
+  var lbl={f:'تسجيل وتعديل',v:'عرض بس',n:'مش ظاهر'};
+  var tb=document.getElementById('matrix');
+  if(tb){tb.innerHTML=rows.map(function(r){
+    return '<tr><th scope="row">'+r[0]+'</th>'+r[1].split(' ').map(function(k){
+      var star=k.indexOf('*')>-1,t=k.charAt(0);
+      return '<td><i class="p '+t+'" title="'+lbl[t]+'" aria-label="'+lbl[t]+'"></i>'+(star?'<sup>*</sup>':'')+'</td>'}).join('')+'</tr>'}).join('');}
+
+  // timeline: start week, duration (of 19 weeks)
+  var ph=[
+    ['١. الأساس','المستخدمين والصلاحيات والبيانات الأساسية',0,2],
+    ['٢. الإنتاج والجودة','الورديات والمراحل والفرز والعيوب',2,3],
+    ['٣. المخازن والأكواد','الخامات، والبالتات بالتشغيلة',5,3],
+    ['٤. الصيانة والطاقة','الجداول والأعطال والعدادات',8,2],
+    ['٥. المبيعات والشحن','التجار والحجز والمديونية والتحميل',10,3],
+    ['٦. التخطيط والتكلفة','الخطة وتكلفة المتر الفعلية',13,2],
+    ['٧. لوحة الإدارة','المؤشرات والتقارير والتنبيهات',15,2],
+    ['٨. التسليم','مراجعة أمان نهائية، دليل مصوّر، التشغيل',17,2]
+  ];
+  var T=19, ar=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
+  var g=document.getElementById('gantt');
+  if(g){g.innerHTML=ph.map(function(p,i){
+      return '<div class="grow"><div class="gname">'+p[0]+'<small>'+p[1]+'</small></div><div class="gtrack"><span class="gbar'+(i===ph.length-1?' last':'')+'" style="right:'+(p[2]/T*100)+'%;width:'+(p[3]/T*100)+'%">'+ar(p[3])+' أسبوع</span></div></div>'
+    }).join('')+'<div class="gscale"><span></span><div class="ticks"><span>الأسبوع ١</span><span>٥</span><span>١٠</span><span>١٥</span><span>١٩</span></div></div>';}
+})();
+</script>
