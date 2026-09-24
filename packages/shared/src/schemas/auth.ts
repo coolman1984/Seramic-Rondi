@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { normalizeDigits } from '../digits';
+import { normalizeDigits, toArabicDigits } from '../digits';
 import { text } from './common';
 
 export const USERNAME_RE = /^[a-z0-9][a-z0-9._-]{2,31}$/;
@@ -23,7 +23,7 @@ export const PASSWORD_MIN = 8;
 
 export const newPassword = z
   .string({ error: 'كلمة السر مطلوبة' })
-  .min(PASSWORD_MIN, { error: `كلمة السر لازم تكون ${PASSWORD_MIN} حروف أو أرقام على الأقل` })
+  .min(PASSWORD_MIN, { error: `كلمة السر لازم تكون ${toArabicDigits(PASSWORD_MIN)} حروف أو أرقام على الأقل` })
   .max(128, { error: 'كلمة السر طويلة جداً' })
   .refine((p) => !COMMON_PASSWORDS.has(p.toLowerCase()), { error: 'كلمة السر دي مشهورة وسهل تتخمن، اختار غيرها' })
   .refine((p) => new Set(p).size >= 4, { error: 'كلمة السر فيها تكرار كتير، اختار حروف وأرقام متنوعة' });

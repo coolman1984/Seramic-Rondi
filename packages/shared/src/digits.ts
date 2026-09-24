@@ -24,3 +24,8 @@ export function parseLooseNumber(input: string): number {
   if (s === '' || !/^-?\d+(\.\d+)?$/.test(s)) return NaN;
   return Number(s);
 }
+
+/** 12 → "١٢" للرسايل اللي بتظهر للمستخدم */
+export function toArabicDigits(value: number | string): string {
+  return String(value).replace(/\d/g, (d) => ARABIC_INDIC[Number(d)]);
+}

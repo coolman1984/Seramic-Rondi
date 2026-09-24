@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { normalizeDigits, parseLooseNumber } from '../digits';
+import { normalizeDigits, parseLooseNumber, toArabicDigits as ar } from '../digits';
 
 // رسائل الأخطاء الافتراضية بالعربي
 z.config(z.locales.ar());
@@ -13,8 +13,8 @@ export const text = (min: number, max: number, label = 'الخانة') =>
   z
     .string({ error: `${label} مطلوبة` })
     .trim()
-    .min(min, { error: min <= 1 ? `${label} مطلوبة` : `${label} لازم تكون ${min} حروف على الأقل` })
-    .max(max, { error: `${label} أطول من ${max} حرف` })
+    .min(min, { error: min <= 1 ? `${label} مطلوبة` : `${label} لازم تكون ${ar(min)} حروف على الأقل` })
+    .max(max, { error: `${label} أطول من ${ar(max)} حرف` })
     .refine((s) => !CONTROL_CHARS.test(s), { error: `${label} فيها رموز غير مسموحة` });
 
 export const optionalText = (max: number, label = 'الخانة') =>
@@ -30,7 +30,7 @@ export const code = (label = 'الكود', max = 20) =>
     z
       .string({ error: `${label} مطلوب` })
       .min(1, { error: `${label} مطلوب` })
-      .max(max, { error: `${label} أطول من ${max} حرف` })
+      .max(max, { error: `${label} أطول من ${ar(max)} حرف` })
       .regex(/^[\p{L}\p{N}][\p{L}\p{N}._\-/]*$/u, { error: `${label}: حروف وأرقام بس، ومن غير مسافات` }),
   );
 
@@ -39,23 +39,23 @@ export const num = (label = 'الرقم') =>
   z.preprocess((v) => {
     if (typeof v === 'string') return v.trim() === '' ? undefined : parseLooseNumber(v);
     return v;
-  }, z.number({ error: `${label} لازم يكون رقم` }).refine(Number.isFinite, { error: `${label} لازم يكون رقم` }));
+  }, z.number({ error: (iss) => (iss.input === undefined ? `${label} مطلوب` : `${label} لازم يكون رقم`) }).refine(Number.isFinite, { error: `${label} لازم يكون رقم` }));
 
 export const int = (label: string, min: number, max: number) =>
   num(label).pipe(
     z
       .number()
       .int({ error: `${label} لازم يكون رقم صحيح` })
-      .min(min, { error: `${label} لازم يكون ${min} أو أكتر` })
-      .max(max, { error: `${label} لازم يكون ${max} أو أقل` }),
+      .min(min, { error: `${label} لازم يكون ${ar(min)} أو أكتر` })
+      .max(max, { error: `${label} لازم يكون ${ar(max)} أو أقل` }),
   );
 
 export const decimal = (label: string, min: number, max: number) =>
   num(label).pipe(
     z
       .number()
-      .min(min, { error: `${label} لازم يكون ${min} أو أكتر` })
-      .max(max, { error: `${label} لازم يكون ${max} أو أقل` }),
+      .min(min, { error: `${label} لازم يكون ${ar(min)} أو أكتر` })
+      .max(max, { error: `${label} لازم يكون ${ar(max)} أو أقل` }),
   );
 
 export const id = z.uuid({ error: 'اختيار غير صحيح' });
